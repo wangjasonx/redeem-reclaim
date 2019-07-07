@@ -1,0 +1,17 @@
+name: Redeem
+main: me.Tsyrac.redeem.main
+version: "2.0"
+author: Tsyrac
+commands:
+  reclaim:
+    description: reclaim command
+    usage: /reclaim <rank name>
+  reclaim reload:
+    description: reloads config
+    usage: /reclaim reload
+  reclaim add:
+    description: allows you to add a rank to the list of items
+    usage: /reclaim add <rank>
+  reclaim addCommand:
+    description: allows you to add a command to a rank
+    usage: /reclaim addCommand <rank> <command>
