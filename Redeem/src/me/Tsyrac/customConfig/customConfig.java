@@ -1,6 +1,7 @@
 package me.Tsyrac.customConfig;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -13,7 +14,7 @@ public class customConfig {
 
     private static File file;
     private static FileConfiguration customFile;
-    private static List<String> list;
+    private static List<String> list = new ArrayList<>();
 
     //Finds or generates the custom config file
     public static void setup(){
@@ -23,17 +24,19 @@ public class customConfig {
         if(!file.exists()){
             try{
                 file.createNewFile();
+                reload();
+                customFile.createSection("Example");
+                customFile.getConfigurationSection("Example").set("Permission", "reclaim.Example");
+                customFile.getConfigurationSection("Example").set("Commands", list);
+                list.add("give <player> flower 1");
+                save();
             }
             catch(IOException e) {
                 /* nothing. */
             }
-            customFile = YamlConfiguration.loadConfiguration(file);
-            customFile.createSection("Example");
-            list = new ArrayList<>();
-            list.add("give <player> flower 1");
-            customFile.getConfigurationSection("Example").set("Commands", list);
-        }
 
+        }
+        reload();
 
     }
 

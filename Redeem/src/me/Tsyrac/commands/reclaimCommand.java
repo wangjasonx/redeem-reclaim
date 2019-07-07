@@ -43,6 +43,7 @@ public class reclaimCommand implements CommandExecutor {
                     }
                     else{
                         customConfig.getFile().createSection(args[1]);
+                        customConfig.getFile().getConfigurationSection(args[1]).set("Permission", "reclaim." + args[1]);
                         customConfig.getFile().getConfigurationSection(args[1]).set("Commands", new ArrayList<String>());
                         customConfig.save();
                         player.sendMessage(ChatColor.RED + args[1] + " has been added!");
