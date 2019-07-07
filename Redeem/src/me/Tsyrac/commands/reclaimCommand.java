@@ -93,6 +93,7 @@ public class reclaimCommand implements CommandExecutor {
                             swap = swap.trim();
                             Bukkit.dispatchCommand(console, swap);
                         }
+                        player.sendMessage(ChatColor.DARK_RED + "Successfully claimed: " + ChatColor.GOLD + args[0]);
                     }
                     else {
                         player.sendMessage(ChatColor.DARK_RED + "You do not have access to: " + ChatColor.GOLD + args[0]);
