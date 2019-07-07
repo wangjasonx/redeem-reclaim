@@ -27,18 +27,30 @@ public class reclaimCommand implements CommandExecutor {
                 if(args.length == 0 && !allowed(player)) {
                     player.sendMessage(ChatColor.GRAY + "Developer: Tsyrac");
                     player.sendMessage(ChatColor.GOLD + "Commands:");
-                    player.sendMessage(ChatColor.RED + "/reclaim <rank name>");
+                    player.sendMessage(ChatColor.RED + "/reclaim <group name>");
                 }
                 else if(args.length == 0 && allowed(player)){
                     player.sendMessage(ChatColor.GRAY + "Developer: Tsyrac");
                     player.sendMessage(ChatColor.GOLD + "Commands:");
-                    player.sendMessage(ChatColor.RED + "/reclaim <rank name>");
+                    player.sendMessage(ChatColor.RED + "/reclaim <group name>");
                     player.sendMessage(ChatColor.RED + "/reclaim reload");
-                    player.sendMessage(ChatColor.RED + "/reclaim add <rank>");
-                    player.sendMessage(ChatColor.RED + "/reclaim addCommand <rank> <command>");
+                    player.sendMessage(ChatColor.RED + "/reclaim add <group>");
+                    player.sendMessage(ChatColor.RED + "/reclaim addCommand <group> <command>");
                     player.sendMessage(ChatColor.RED + "/reclaim clearPlayers");
                     player.sendMessage(ChatColor.RED+ "/reclaim addPlayer <name>");
                     player.sendMessage(ChatColor.RED + "/reclaim removePlayer <name>");
+                    player.sendMessage(ChatColor.RED + "/reclaim viewGroup <group name>");
+                }
+                else if(args[0].equalsIgnoreCase("viewGroup") && allowed(player)){
+                    if(args.length > 2) {
+                        player.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please try again.");
+                    }
+                    else if(args.length < 2){
+                        player.sendMessage(ChatColor.RED + "Missing arguments: <group name>");
+                    }
+                    else{
+                        viewGroup(args[1], player);
+                    }
                 }
                 else if(args[0].equalsIgnoreCase("clearPlayers") && allowed(player)){
                     userList.reset();
@@ -60,7 +72,7 @@ public class reclaimCommand implements CommandExecutor {
                         player.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please try again.");
                     }
                     else if(args.length < 2){
-                        player.sendMessage(ChatColor.RED + "Missing arguments: <rank>");
+                        player.sendMessage(ChatColor.RED + "Missing arguments: <group>");
                     }
                     else{
                         customConfig.getFile().createSection(args[1]);
@@ -72,7 +84,7 @@ public class reclaimCommand implements CommandExecutor {
                 }
                 else if(args[0].equalsIgnoreCase("addCommand") && allowed(player)){
                     if(args.length < 2) {
-                        player.sendMessage(ChatColor.RED + "Missing arguments: <rank> <command>");
+                        player.sendMessage(ChatColor.RED + "Missing arguments: <group> <command>");
                     }
                     else if(args.length < 3){
                         player.sendMessage(ChatColor.RED + "Missing arguments: <command>");
@@ -120,7 +132,7 @@ public class reclaimCommand implements CommandExecutor {
         return true;
     }
 
-    //Cycles through the config.yml and checks if the rank exists
+    //Cycles through the config.yml and checks if the group exists
     public boolean cycleFile(String argument) {
         return(customConfig.getFile().contains(argument));
     }
@@ -184,11 +196,20 @@ public class reclaimCommand implements CommandExecutor {
         if(checkUserList(player)){
             userList.getFile().set(player.getUniqueId().toString(), null);
             userList.save();
-            player.sendMessage(ChatColor.DARK_RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " has been removed");
+            player.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " has been removed");
             return true;
         }
         player.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " not found");
         return false;
+    }
+
+    //Views the group
+    public void viewGroup(String group, Player p){
+        List<String> commands = customConfig.getFile().getStringList(group + ".Commands");
+        p.sendMessage(ChatColor.GOLD + group + ":");
+        for(String x : commands){
+            p.sendMessage(ChatColor.LIGHT_PURPLE + x);
+        }
     }
 
 }
