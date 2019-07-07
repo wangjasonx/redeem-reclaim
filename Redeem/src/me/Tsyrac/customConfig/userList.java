@@ -48,8 +48,15 @@ public class userList {
     }
 
     public static void reload() {
-
         customFile = YamlConfiguration.loadConfiguration(file);
+    }
+
+    public static void reset(){
+        for(String key : customFile.getKeys(false)){
+            customFile.set(key, null);
+            save();
+        }
+        save();
     }
 
 }

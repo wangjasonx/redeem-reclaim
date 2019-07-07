@@ -33,6 +33,7 @@ public class main extends JavaPlugin {
     public void onDisable(){
         System.out.println("The plugin is shutting down!");
         customConfig.save();
+        userList.save();
         // Plugin shutdown logic
     }
 

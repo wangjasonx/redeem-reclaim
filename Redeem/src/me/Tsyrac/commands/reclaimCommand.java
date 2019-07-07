@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import me.Tsyrac.customConfig.userList;
@@ -15,6 +16,7 @@ import java.util.List;
 
 
 public class reclaimCommand implements CommandExecutor {
+
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -34,10 +36,24 @@ public class reclaimCommand implements CommandExecutor {
                     player.sendMessage(ChatColor.RED + "/reclaim reload");
                     player.sendMessage(ChatColor.RED + "/reclaim add <rank>");
                     player.sendMessage(ChatColor.RED + "/reclaim addCommand <rank> <command>");
+                    player.sendMessage(ChatColor.RED + "/reclaim clearPlayers");
+                    player.sendMessage(ChatColor.RED+ "/reclaim addPlayer <name>");
+                    player.sendMessage(ChatColor.RED + "/reclaim removePlayer <name>");
+                }
+                else if(args[0].equalsIgnoreCase("clearPlayers") && allowed(player)){
+                    userList.reset();
+                    player.sendMessage(ChatColor.DARK_RED + "All players have been cleared from the list.");
+                }
+                else if(args[0].equalsIgnoreCase("addPlayer") && allowed(player)){
+                    addPlayer(player);
+                }
+                else if(args[0].equalsIgnoreCase("removePlayer") && allowed(player)){
+                    removePlayer(player);
                 }
                 else if(args[0].equalsIgnoreCase("reload") && allowed(player)) {
                     customConfig.reload();
-                    player.sendMessage(ChatColor.RED + "The config has been reloaded!");
+                    userList.reload();
+                    player.sendMessage(ChatColor.RED + "The configs have been reloaded!");
                 }
                 else if(args[0].equalsIgnoreCase("add") && allowed(player)){
                     if(args.length > 2) {
@@ -135,13 +151,42 @@ public class reclaimCommand implements CommandExecutor {
 
     //Searching through list of UUIDs for the player, if found returns false, if not found adds player and returns true
     public boolean searchPlayer(Player player){
-        if(userList.getFile().contains(player.getUniqueId().toString())){
-            player.sendMessage(ChatColor.DARK_RED + "You have already reclaimed your items");
+        if(checkUserList(player)){
             return false;
         }
         userList.getFile().createSection(player.getUniqueId().toString());
         userList.save();
         return true;
+    }
+
+    //Searching through list of UUIDs for the player
+    public boolean checkUserList(Player p){
+        if(userList.getFile().contains(p.getUniqueId().toString())){
+            return true;
+        }
+        return false;
+    }
+
+    //Adds player to the UUID list
+    public boolean addPlayer(Player player){
+        if(checkUserList(player)){
+            player.sendMessage(ChatColor.DARK_RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " already exists");
+            return false;
+        }
+        userList.getFile().createSection(player.getUniqueId().toString());
+        player.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " has been added");
+        return true;
+    }
+
+    //Removes player from the UUID list
+    public boolean removePlayer(Player player){
+        if(checkUserList(player)){
+            userList.getFile().set(player.getUniqueId().toString(), null);
+            player.sendMessage(ChatColor.DARK_RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " has been removed");
+            return true;
+        }
+        player.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " not found");
+        return false;
     }
 
 }
