@@ -80,7 +80,7 @@ public class reclaimCommand implements CommandExecutor {
                     if(!cycleFile(args[0])){
                         player.sendMessage(ChatColor.RED + args[0] + " does not exist. Please try again.");
                     }
-                    else if(sender.hasPermission("essentials.kits." + args[0])){
+                    else if(sender.hasPermission(getPermission(args[0]))){
                         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
                         List<String> runCommands = customConfig.getFile().getStringList(args[0] + ".Commands");
                         for(int i = 0; i < runCommands.size(); i++){
@@ -88,6 +88,9 @@ public class reclaimCommand implements CommandExecutor {
                             swap = swap.trim();
                             Bukkit.dispatchCommand(console, swap);
                         }
+                    }
+                    else {
+                        player.sendMessage(ChatColor.DARK_RED + "Insufficient Permissions");
                     }
                 }
             }
@@ -110,6 +113,10 @@ public class reclaimCommand implements CommandExecutor {
             }
         }
         return toReturn;
+    }
+
+    public String getPermission(String path){
+        return customConfig.getFile().getString(path + ".Permission");
     }
 
 }
