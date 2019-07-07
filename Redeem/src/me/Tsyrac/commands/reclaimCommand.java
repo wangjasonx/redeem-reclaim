@@ -174,6 +174,7 @@ public class reclaimCommand implements CommandExecutor {
             return false;
         }
         userList.getFile().createSection(player.getUniqueId().toString());
+        userList.save();
         player.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " has been added");
         return true;
     }
@@ -182,6 +183,7 @@ public class reclaimCommand implements CommandExecutor {
     public boolean removePlayer(Player player){
         if(checkUserList(player)){
             userList.getFile().set(player.getUniqueId().toString(), null);
+            userList.save();
             player.sendMessage(ChatColor.DARK_RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " has been removed");
             return true;
         }
