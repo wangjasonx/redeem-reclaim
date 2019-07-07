@@ -25,27 +25,27 @@ public class reclaimCommand implements CommandExecutor {
                 Player player = (Player) sender;
                 if(args.length == 0 && !allowed(player)) {
                     player.sendMessage(ChatColor.GRAY + "Developer: Tsyrac");
-                    player.sendMessage(ChatColor.GOLD + "Commands:");
-                    player.sendMessage(ChatColor.RED + "/reclaim <group name>");
+                    player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Commands:");
+                    player.sendMessage(ChatColor.RED + "/reclaim" + ChatColor.DARK_RED + " <group name>");
                 }
                 else if(args.length == 0 && allowed(player)){
                     player.sendMessage(ChatColor.GRAY + "Developer: Tsyrac");
-                    player.sendMessage(ChatColor.GOLD + "Commands:");
-                    player.sendMessage(ChatColor.RED + "/reclaim <group name>");
+                    player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Commands:");
+                    player.sendMessage(ChatColor.RED + "/reclaim" + ChatColor.DARK_RED + "<group name>");
                     player.sendMessage(ChatColor.RED + "/reclaim reload");
-                    player.sendMessage(ChatColor.RED + "/reclaim add <group>");
-                    player.sendMessage(ChatColor.RED + "/reclaim addCommand <group> <command>");
+                    player.sendMessage(ChatColor.RED + "/reclaim add" + ChatColor.DARK_RED + " <group>");
+                    player.sendMessage(ChatColor.RED + "/reclaim addCommand" + ChatColor.DARK_RED + " <group> <command>");
                     player.sendMessage(ChatColor.RED + "/reclaim clearPlayers");
-                    player.sendMessage(ChatColor.RED+ "/reclaim addPlayer <name>");
-                    player.sendMessage(ChatColor.RED + "/reclaim removePlayer <name>");
-                    player.sendMessage(ChatColor.RED + "/reclaim viewGroup <group name>");
+                    player.sendMessage(ChatColor.RED+ "/reclaim addPlayer" + ChatColor.DARK_RED + " <name>");
+                    player.sendMessage(ChatColor.RED + "/reclaim removePlayer" + ChatColor.DARK_RED + " <name>");
+                    player.sendMessage(ChatColor.RED + "/reclaim viewGroup" + ChatColor.DARK_RED + " <group name>");
                 }
                 else if(args[0].equalsIgnoreCase("viewGroup") && allowed(player)){
                     if(args.length > 2) {
                         player.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please try again.");
                     }
                     else if(args.length < 2){
-                        player.sendMessage(ChatColor.RED + "Missing arguments: <group name>");
+                        player.sendMessage(ChatColor.RED + "Missing arguments:" + ChatColor.DARK_RED + " <group name>");
                     }
                     else{
                         viewGroup(args[1], player);

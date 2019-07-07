@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="Redeem:jar">
-    <output-path>$USER_HOME$/Desktop/Server/plugins</output-path>
+    <output-path>$USER_HOME$/Desktop/Minecraft Servers/Server 1.8/plugins</output-path>
     <root id="archive" name="Redeem.jar">
       <element id="module-output" name="Redeem" />
       <element id="extracted-dir" path="$USER_HOME$/Desktop/BuildTools/spigot-1.8.8.jar" path-in-jar="/" />
