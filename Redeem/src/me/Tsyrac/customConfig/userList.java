@@ -9,26 +9,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class customConfig {
+public class userList {
 
     private static File file;
     private static FileConfiguration customFile;
     private static List<String> list = new ArrayList<>();
 
-    //Finds or generates the custom config file
+    //Finds or generates the custom user file
     public static void setup(){
 
-        file = new File(Bukkit.getServer().getPluginManager().getPlugin("Redeem").getDataFolder(), "redeemConfig.yml");
+        file = new File(Bukkit.getServer().getPluginManager().getPlugin("Redeem").getDataFolder(), "userList.yml");
 
         if(!file.exists()){
             try{
                 file.createNewFile();
-                reload();
-                customFile.createSection("Example");
-                customFile.getConfigurationSection("Example").set("Permission", "reclaim.Example");
-                customFile.getConfigurationSection("Example").set("Commands", list);
-                list.add("give <player> flower 1");
-                save();
             }
             catch(IOException e) {
                 /* nothing. */

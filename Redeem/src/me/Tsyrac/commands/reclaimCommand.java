@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
+import me.Tsyrac.customConfig.userList;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,7 +85,7 @@ public class reclaimCommand implements CommandExecutor {
                     if(!cycleFile(args[0])){
                         player.sendMessage(ChatColor.RED + args[0] + " does not exist. Please try again.");
                     }
-                    else if(sender.hasPermission(getPermission(args[0]))){
+                    else if(sender.hasPermission(getPermission(args[0])) && searchPlayer(player)){
                         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
                         List<String> runCommands = customConfig.getFile().getStringList(args[0] + ".Commands");
                         for(int i = 0; i < runCommands.size(); i++){
@@ -131,6 +131,17 @@ public class reclaimCommand implements CommandExecutor {
     //Checks if the player has admin permissions or not
     public boolean allowed(Player player) {
         return(player.hasPermission("reclaim.admin"));
+    }
+
+    //Searching through list of UUIDs for the player, if found returns false, if not found adds player and returns true
+    public boolean searchPlayer(Player player){
+        if(userList.getFile().contains(player.getUniqueId().toString())){
+            player.sendMessage(ChatColor.DARK_RED + "You have already reclaimed your items");
+            return false;
+        }
+        userList.getFile().createSection(player.getUniqueId().toString());
+        userList.save();
+        return true;
     }
 
 }
