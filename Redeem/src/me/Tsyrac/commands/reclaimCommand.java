@@ -208,7 +208,7 @@ public class reclaimCommand implements CommandExecutor {
         List<String> commands = customConfig.getFile().getStringList(group + ".Commands");
         p.sendMessage(ChatColor.GOLD + group + ":");
         for(String x : commands){
-            p.sendMessage(ChatColor.LIGHT_PURPLE + x);
+            p.sendMessage(ChatColor.LIGHT_PURPLE + "- " + x);
         }
     }
 
