@@ -22,7 +22,12 @@ public class reclaimCommand implements CommandExecutor {
         if(sender instanceof Player) {
             if(command.getName().equalsIgnoreCase("reclaim")){
                 Player player = (Player) sender;
-                if(args.length == 0) {
+                if(args.length == 0 && !allowed(player)) {
+                    player.sendMessage(ChatColor.GRAY + "Developer: Tsyrac");
+                    player.sendMessage(ChatColor.GOLD + "Commands:");
+                    player.sendMessage(ChatColor.RED + "/reclaim <rank name>");
+                }
+                else if(args.length == 0 && allowed(player)){
                     player.sendMessage(ChatColor.GRAY + "Developer: Tsyrac");
                     player.sendMessage(ChatColor.GOLD + "Commands:");
                     player.sendMessage(ChatColor.RED + "/reclaim <rank name>");
@@ -30,11 +35,11 @@ public class reclaimCommand implements CommandExecutor {
                     player.sendMessage(ChatColor.RED + "/reclaim add <rank>");
                     player.sendMessage(ChatColor.RED + "/reclaim addCommand <rank> <command>");
                 }
-                else if(args[0].equalsIgnoreCase("reload")) {
+                else if(args[0].equalsIgnoreCase("reload") && allowed(player)) {
                     customConfig.reload();
                     player.sendMessage(ChatColor.RED + "The config has been reloaded!");
                 }
-                else if(args[0].equalsIgnoreCase("add")){
+                else if(args[0].equalsIgnoreCase("add") && allowed(player)){
                     if(args.length > 2) {
                         player.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please try again.");
                     }
@@ -49,7 +54,7 @@ public class reclaimCommand implements CommandExecutor {
                         player.sendMessage(ChatColor.RED + args[1] + " has been added!");
                     }
                 }
-                else if(args[0].equalsIgnoreCase("addCommand")){
+                else if(args[0].equalsIgnoreCase("addCommand") && allowed(player)){
                     if(args.length < 2) {
                         player.sendMessage(ChatColor.RED + "Missing arguments: <rank> <command>");
                     }
@@ -90,7 +95,7 @@ public class reclaimCommand implements CommandExecutor {
                         }
                     }
                     else {
-                        player.sendMessage(ChatColor.DARK_RED + "Insufficient Permissions");
+                        player.sendMessage(ChatColor.DARK_RED + "You do not have access to: " + ChatColor.GOLD + args[0]);
                     }
                 }
             }
@@ -98,10 +103,12 @@ public class reclaimCommand implements CommandExecutor {
         return true;
     }
 
+    //Cycles through the config.yml and checks if the rank exists
     public boolean cycleFile(String argument) {
         return(customConfig.getFile().contains(argument));
     }
 
+    //Checks for instances of <player> in config.yml commands
     public String replacePlayerInstance(@NotNull String argument, Player p){
         String[] toFix = argument.split(" ");
         String toReturn = "";
@@ -115,8 +122,14 @@ public class reclaimCommand implements CommandExecutor {
         return toReturn;
     }
 
+    //Grabs the permission from the config.yml file
     public String getPermission(String path){
         return customConfig.getFile().getString(path + ".Permission");
+    }
+
+    //Checks if the player has admin permissions or not
+    public boolean allowed(Player player) {
+        return(player.hasPermission("reclaim.admin"));
     }
 
 }
