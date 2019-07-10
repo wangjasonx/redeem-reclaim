@@ -21,17 +21,21 @@ public class reclaimCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
         if(sender instanceof Player) {
-            if(command.getName().equalsIgnoreCase("reclaim")){
-                Player player = (Player) sender;
+            Player player = (Player) sender;
+            
+            if(command.getName().equalsIgnoreCase("reclaim") && !allowed((Player)sender)){
                 if(args.length == 0 && !allowed(player)) {
                     player.sendMessage(ChatColor.GRAY + "Developer: Tsyrac");
                     player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Commands:");
                     player.sendMessage(ChatColor.RED + "/reclaim" + ChatColor.DARK_RED + " <group name>");
                 }
-                else if(args.length == 0 && allowed(player)){
+            }
+
+            if(command.getName().equalsIgnoreCase("reclaim") && allowed((Player)sender)){
+                if(args.length == 0){
                     player.sendMessage(ChatColor.GRAY + "Developer: Tsyrac");
                     player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Commands:");
-                    player.sendMessage(ChatColor.RED + "/reclaim" + ChatColor.DARK_RED + "<group name>");
+                    player.sendMessage(ChatColor.RED + "/reclaim" + ChatColor.DARK_RED + " <group name>");
                     player.sendMessage(ChatColor.RED + "/reclaim reload");
                     player.sendMessage(ChatColor.RED + "/reclaim add" + ChatColor.DARK_RED + " <group>");
                     player.sendMessage(ChatColor.RED + "/reclaim addCommand" + ChatColor.DARK_RED + " <group> <command>");
@@ -40,7 +44,7 @@ public class reclaimCommand implements CommandExecutor {
                     player.sendMessage(ChatColor.RED + "/reclaim removePlayer" + ChatColor.DARK_RED + " <name>");
                     player.sendMessage(ChatColor.RED + "/reclaim viewGroup" + ChatColor.DARK_RED + " <group name>");
                 }
-                else if(args[0].equalsIgnoreCase("viewGroup") && allowed(player)){
+                else if(args[0].equalsIgnoreCase("viewGroup")){
                     if(args.length > 2) {
                         player.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please try again.");
                     }
@@ -51,22 +55,22 @@ public class reclaimCommand implements CommandExecutor {
                         viewGroup(args[1], player);
                     }
                 }
-                else if(args[0].equalsIgnoreCase("clearPlayers") && allowed(player)){
+                else if(args[0].equalsIgnoreCase("clearPlayers")){
                     userList.reset();
                     player.sendMessage(ChatColor.DARK_RED + "All players have been cleared from the list.");
                 }
-                else if(args[0].equalsIgnoreCase("addPlayer") && allowed(player)){
+                else if(args[0].equalsIgnoreCase("addPlayer")){
                     addPlayer(player);
                 }
-                else if(args[0].equalsIgnoreCase("removePlayer") && allowed(player)){
+                else if(args[0].equalsIgnoreCase("removePlayer")){
                     removePlayer(player);
                 }
-                else if(args[0].equalsIgnoreCase("reload") && allowed(player)) {
+                else if(args[0].equalsIgnoreCase("reload")) {
                     customConfig.reload();
                     userList.reload();
                     player.sendMessage(ChatColor.RED + "The configs have been reloaded!");
                 }
-                else if(args[0].equalsIgnoreCase("add") && allowed(player)){
+                else if(args[0].equalsIgnoreCase("add")){
                     if(args.length > 2) {
                         player.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please try again.");
                     }
@@ -81,7 +85,7 @@ public class reclaimCommand implements CommandExecutor {
                         player.sendMessage(ChatColor.RED + args[1] + " has been added!");
                     }
                 }
-                else if(args[0].equalsIgnoreCase("addCommand") && allowed(player)){
+                else if(args[0].equalsIgnoreCase("addCommand")){
                     if(args.length < 2) {
                         player.sendMessage(ChatColor.RED + "Missing arguments: <group> <command>");
                     }
