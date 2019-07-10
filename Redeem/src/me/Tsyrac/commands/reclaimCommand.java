@@ -3,6 +3,7 @@ package me.Tsyrac.commands;
 import me.Tsyrac.customConfig.customConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import me.Tsyrac.customConfig.userList;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 public class reclaimCommand implements CommandExecutor {
@@ -73,10 +75,26 @@ public class reclaimCommand implements CommandExecutor {
                     player.sendMessage(ChatColor.DARK_RED + "All players have been cleared from the list.");
                 }
                 else if(args[0].equalsIgnoreCase("addPlayer")){
-                    addPlayer(player);
+                    if(args.length > 2){
+                        player.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please try again.");
+                    }
+                    else if(args.length < 2){
+                        player.sendMessage(ChatColor.RED + "Missing arguments: <player>");
+                    }
+                    else {
+                        addPlayer(player, args[1]);
+                    }
                 }
                 else if(args[0].equalsIgnoreCase("removePlayer")){
-                    removePlayer(player);
+                    if(args.length > 2){
+                        player.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please try again.");
+                    }
+                    else if(args.length < 2){
+                        player.sendMessage(ChatColor.RED + "Missing arguments: <player>");
+                    }
+                    else {
+                        removePlayer(player, args[1]);
+                    }
                 }
                 else if(args[0].equalsIgnoreCase("reload")) {
                     customConfig.reload();
@@ -179,7 +197,7 @@ public class reclaimCommand implements CommandExecutor {
 
     //Searching through list of UUIDs for the player, if found returns false, if not found adds player and returns true
     public boolean searchPlayer(Player player){
-        if(checkUserList(player)){
+        if(playerConfig.contains(player.getUniqueId().toString())){
             return false;
         }
         playerConfig.createSection(player.getUniqueId().toString());
@@ -188,34 +206,37 @@ public class reclaimCommand implements CommandExecutor {
     }
 
     //Searching through list of UUIDs for the player
-    public boolean checkUserList(Player p){
-        if(playerConfig.contains(p.getUniqueId().toString())){
+    public boolean checkUserList(Player p, String player){
+        UUID unique = getUniquePlayer(player, p);
+        if(playerConfig.contains(unique.toString())){
             return true;
         }
         return false;
     }
 
     //Adds player to the UUID list
-    public boolean addPlayer(Player player){
-        if(checkUserList(player)){
-            player.sendMessage(ChatColor.DARK_RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " already exists");
+    public boolean addPlayer(Player player, String p){
+        UUID unique = getUniquePlayer(p, player);
+        if(checkUserList(player, p)){
+            player.sendMessage(ChatColor.DARK_RED + "Player: " + ChatColor.GOLD + p + ChatColor.RED + " already exists");
             return false;
         }
-        playerConfig.createSection(player.getUniqueId().toString());
+        playerConfig.createSection(unique.toString());
         userList.save();
-        player.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " has been added");
+        player.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + p + ChatColor.RED + " has been added");
         return true;
     }
 
     //Removes player from the UUID list
-    public boolean removePlayer(Player player){
-        if(checkUserList(player)){
-            playerConfig.set(player.getUniqueId().toString(), null);
+    public boolean removePlayer(Player player, String p){
+        UUID unique = getUniquePlayer(p, player);
+        if(checkUserList(player, p)){
+            playerConfig.set(unique.toString(), null);
             userList.save();
-            player.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " has been removed");
+            player.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + p + ChatColor.RED + " has been removed");
             return true;
         }
-        player.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " not found");
+        player.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + p + ChatColor.RED + " not found");
         return false;
     }
 
@@ -233,6 +254,19 @@ public class reclaimCommand implements CommandExecutor {
     public void sendPlayerMessages(List<String> toSend, Player player){
         for(String toReturn : toSend){
             player.sendMessage(toReturn);
+        }
+    }
+
+    public UUID getUniquePlayer(String player, Player p){
+        if(Bukkit.getPlayer(player) != null){
+            return(Bukkit.getPlayer(player).getUniqueId());
+        }
+        else if(Bukkit.getOfflinePlayer(player) != null){
+            return(Bukkit.getOfflinePlayer(player).getUniqueId());
+        }
+        else{
+            p.sendMessage(ChatColor.RED + "Player not found");
+            return null;
         }
     }
 
