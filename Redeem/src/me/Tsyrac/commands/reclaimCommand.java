@@ -17,9 +17,14 @@ import java.util.List;
 
 public class reclaimCommand implements CommandExecutor {
 
-    private FileConfiguration redeemConfig = customConfig.getFile();
-    private FileConfiguration playerConfig = userList.getFile();
+    private FileConfiguration redeemConfig;
+    private FileConfiguration playerConfig;
     private List<String> messages;
+
+    public reclaimCommand() {
+        this.redeemConfig = customConfig.getFile();
+        this.playerConfig = userList.getFile();
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
