@@ -6,14 +6,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class userList {
 
     private static File file;
     private static FileConfiguration customFile;
-    private static List<String> list = new ArrayList<>();
 
     //Finds or generates the custom user file
     public static void setup(){

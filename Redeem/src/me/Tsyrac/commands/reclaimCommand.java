@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import me.Tsyrac.customConfig.userList;
@@ -16,13 +17,15 @@ import java.util.List;
 
 public class reclaimCommand implements CommandExecutor {
 
+    private FileConfiguration redeemConfig = customConfig.getFile();
+    private FileConfiguration playerConfig = userList.getFile();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
         if(sender instanceof Player) {
             Player player = (Player) sender;
-            
+
             if(command.getName().equalsIgnoreCase("reclaim") && !allowed((Player)sender)){
                 if(args.length == 0 && !allowed(player)) {
                     player.sendMessage(ChatColor.GRAY + "Developer: Tsyrac");
@@ -78,9 +81,9 @@ public class reclaimCommand implements CommandExecutor {
                         player.sendMessage(ChatColor.RED + "Missing arguments: <group>");
                     }
                     else{
-                        customConfig.getFile().createSection(args[1]);
-                        customConfig.getFile().getConfigurationSection(args[1]).set("Permission", "reclaim." + args[1]);
-                        customConfig.getFile().getConfigurationSection(args[1]).set("Commands", new ArrayList<String>());
+                        redeemConfig.createSection(args[1]);
+                        redeemConfig.getConfigurationSection(args[1]).set("Permission", "reclaim." + args[1]);
+                        redeemConfig.getConfigurationSection(args[1]).set("Commands", new ArrayList<String>());
                         customConfig.save();
                         player.sendMessage(ChatColor.RED + args[1] + " has been added!");
                     }
@@ -94,7 +97,7 @@ public class reclaimCommand implements CommandExecutor {
                     }
                     else if(cycleFile(args[1])){
                         String addedCommand = "";
-                        List<String> commandAdd = customConfig.getFile().getStringList(args[1] + ".Commands");
+                        List<String> commandAdd = redeemConfig.getStringList(args[1] + ".Commands");
                         for (int i = 2; i < args.length; i++) {
                             if(i + 1 == args.length) {
                                 addedCommand += args[i];
@@ -104,7 +107,7 @@ public class reclaimCommand implements CommandExecutor {
                             }
                         }
                         commandAdd.add(addedCommand);
-                        customConfig.getFile().getConfigurationSection(args[1]).set("Commands", commandAdd);
+                        redeemConfig.getConfigurationSection(args[1]).set("Commands", commandAdd);
                         customConfig.save();
                         player.sendMessage(ChatColor.RED + "Added the command: " + ChatColor.YELLOW + addedCommand);
                     }
@@ -118,7 +121,7 @@ public class reclaimCommand implements CommandExecutor {
                     }
                     else if(sender.hasPermission(getPermission(args[0])) && searchPlayer(player)){
                         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-                        List<String> runCommands = customConfig.getFile().getStringList(args[0] + ".Commands");
+                        List<String> runCommands = redeemConfig.getStringList(args[0] + ".Commands");
                         for(int i = 0; i < runCommands.size(); i++){
                             String swap = replacePlayerInstance(runCommands.get(i), (Player) sender);
                             swap = swap.trim();
@@ -137,7 +140,7 @@ public class reclaimCommand implements CommandExecutor {
 
     //Cycles through the config.yml and checks if the group exists
     public boolean cycleFile(String argument) {
-        return(customConfig.getFile().contains(argument));
+        return(redeemConfig.contains(argument));
     }
 
     //Checks for instances of <player> in config.yml commands
@@ -156,7 +159,7 @@ public class reclaimCommand implements CommandExecutor {
 
     //Grabs the permission from the config.yml file
     public String getPermission(String path){
-        return customConfig.getFile().getString(path + ".Permission");
+        return redeemConfig.getString(path + ".Permission");
     }
 
     //Checks if the player has admin permissions or not
@@ -169,14 +172,14 @@ public class reclaimCommand implements CommandExecutor {
         if(checkUserList(player)){
             return false;
         }
-        userList.getFile().createSection(player.getUniqueId().toString());
+        playerConfig.createSection(player.getUniqueId().toString());
         userList.save();
         return true;
     }
 
     //Searching through list of UUIDs for the player
     public boolean checkUserList(Player p){
-        if(userList.getFile().contains(p.getUniqueId().toString())){
+        if(playerConfig.contains(p.getUniqueId().toString())){
             return true;
         }
         return false;
@@ -188,7 +191,7 @@ public class reclaimCommand implements CommandExecutor {
             player.sendMessage(ChatColor.DARK_RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " already exists");
             return false;
         }
-        userList.getFile().createSection(player.getUniqueId().toString());
+        playerConfig.createSection(player.getUniqueId().toString());
         userList.save();
         player.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " has been added");
         return true;
@@ -197,7 +200,7 @@ public class reclaimCommand implements CommandExecutor {
     //Removes player from the UUID list
     public boolean removePlayer(Player player){
         if(checkUserList(player)){
-            userList.getFile().set(player.getUniqueId().toString(), null);
+            playerConfig.set(player.getUniqueId().toString(), null);
             userList.save();
             player.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " has been removed");
             return true;
@@ -208,7 +211,7 @@ public class reclaimCommand implements CommandExecutor {
 
     //Views the group
     public void viewGroup(String group, Player p){
-        List<String> commands = customConfig.getFile().getStringList(group + ".Commands");
+        List<String> commands = redeemConfig.getStringList(group + ".Commands");
         p.sendMessage(ChatColor.GOLD + group + ":");
         for(String x : commands){
             p.sendMessage(ChatColor.LIGHT_PURPLE + "- " + x);
