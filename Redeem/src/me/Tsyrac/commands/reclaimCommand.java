@@ -19,6 +19,7 @@ public class reclaimCommand implements CommandExecutor {
 
     private FileConfiguration redeemConfig = customConfig.getFile();
     private FileConfiguration playerConfig = userList.getFile();
+    private List<String> messages;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -28,24 +29,28 @@ public class reclaimCommand implements CommandExecutor {
 
             if(command.getName().equalsIgnoreCase("reclaim") && !allowed((Player)sender)){
                 if(args.length == 0 && !allowed(player)) {
-                    player.sendMessage(ChatColor.GRAY + "Developer: Tsyrac");
-                    player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Commands:");
-                    player.sendMessage(ChatColor.RED + "/reclaim" + ChatColor.DARK_RED + " <group name>");
+                    messages = new ArrayList<>();
+                    messages.add(ChatColor.GRAY + "Developer: Tsyrac");
+                    messages.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Commands:");
+                    messages.add(ChatColor.RED + "/reclaim" + ChatColor.DARK_RED + " <group name>");
+                    sendPlayerMessages(messages, player);
                 }
             }
 
             if(command.getName().equalsIgnoreCase("reclaim") && allowed((Player)sender)){
                 if(args.length == 0){
-                    player.sendMessage(ChatColor.GRAY + "Developer: Tsyrac");
-                    player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Commands:");
-                    player.sendMessage(ChatColor.RED + "/reclaim" + ChatColor.DARK_RED + " <group name>");
-                    player.sendMessage(ChatColor.RED + "/reclaim reload");
-                    player.sendMessage(ChatColor.RED + "/reclaim add" + ChatColor.DARK_RED + " <group>");
-                    player.sendMessage(ChatColor.RED + "/reclaim addCommand" + ChatColor.DARK_RED + " <group> <command>");
-                    player.sendMessage(ChatColor.RED + "/reclaim clearPlayers");
-                    player.sendMessage(ChatColor.RED+ "/reclaim addPlayer" + ChatColor.DARK_RED + " <name>");
-                    player.sendMessage(ChatColor.RED + "/reclaim removePlayer" + ChatColor.DARK_RED + " <name>");
-                    player.sendMessage(ChatColor.RED + "/reclaim viewGroup" + ChatColor.DARK_RED + " <group name>");
+                    messages = new ArrayList<>();
+                    messages.add(ChatColor.GRAY + "Developer: Tsyrac");
+                    messages.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Commands:");
+                    messages.add(ChatColor.RED + "/reclaim" + ChatColor.DARK_RED + " <group name>");
+                    messages.add(ChatColor.RED + "/reclaim reload");
+                    messages.add(ChatColor.RED + "/reclaim add" + ChatColor.DARK_RED + " <group>");
+                    messages.add(ChatColor.RED + "/reclaim addCommand" + ChatColor.DARK_RED + " <group> <command>");
+                    messages.add(ChatColor.RED + "/reclaim clearPlayers");
+                    messages.add(ChatColor.RED+ "/reclaim addPlayer" + ChatColor.DARK_RED + " <name>");
+                    messages.add(ChatColor.RED + "/reclaim removePlayer" + ChatColor.DARK_RED + " <name>");
+                    messages.add(ChatColor.RED + "/reclaim viewGroup" + ChatColor.DARK_RED + " <group name>");
+                    sendPlayerMessages(messages, player);
                 }
                 else if(args[0].equalsIgnoreCase("viewGroup")){
                     if(args.length > 2) {
@@ -215,6 +220,14 @@ public class reclaimCommand implements CommandExecutor {
         p.sendMessage(ChatColor.GOLD + group + ":");
         for(String x : commands){
             p.sendMessage(ChatColor.LIGHT_PURPLE + "- " + x);
+        }
+    }
+
+
+    //Sends list of messages to players
+    public void sendPlayerMessages(List<String> toSend, Player player){
+        for(String toReturn : toSend){
+            player.sendMessage(toReturn);
         }
     }
 
