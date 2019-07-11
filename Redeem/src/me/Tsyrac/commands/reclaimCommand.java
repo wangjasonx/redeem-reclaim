@@ -58,7 +58,11 @@ public class reclaimCommand implements CommandExecutor {
                     messages.add(ChatColor.RED+ "/reclaim addPlayer" + ChatColor.DARK_RED + " <name>");
                     messages.add(ChatColor.RED + "/reclaim removePlayer" + ChatColor.DARK_RED + " <name>");
                     messages.add(ChatColor.RED + "/reclaim viewGroup" + ChatColor.DARK_RED + " <group name>");
+                    messages.add(ChatColor.RED + "/reclaim listGroups");
                     sendPlayerMessages(messages, player);
+                }
+                else if(args[0].equalsIgnoreCase("listGroups")){
+                    listGroups(player);
                 }
                 else if(args[0].equalsIgnoreCase("viewGroup")){
                     if(args.length > 2) {
@@ -253,6 +257,27 @@ public class reclaimCommand implements CommandExecutor {
         }
     }
 
+    public void listGroups(Player player){
+        Object[] groupList = customConfig.getFile().getKeys(false).toArray();
+        List<String> toReturn = new ArrayList<>();
+        String list = "";
+        for(Object o : groupList){
+            if(o.toString().indexOf(".") == -1){
+                toReturn.add(o.toString());
+            }
+        }
+        player.sendMessage(ChatColor.GOLD + "Groups: ");
+        for(int i = 0; i < toReturn.size(); i++){
+            if(i + 1 == toReturn.size()){
+                list += toReturn.get(i);
+            }
+            else{
+                list += toReturn.get(i) + ", ";
+            }
+        }
+        list = list.trim();
+        player.sendMessage(ChatColor.GREEN + list);
+    }
 
     //Sends list of messages to players
     public void sendPlayerMessages(List<String> toSend, Player player){
