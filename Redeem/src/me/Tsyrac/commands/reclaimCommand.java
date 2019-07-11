@@ -15,6 +15,7 @@ import me.Tsyrac.customConfig.userList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.bukkit.plugin.Plugin;
 
 
 public class reclaimCommand implements CommandExecutor {
@@ -97,9 +98,12 @@ public class reclaimCommand implements CommandExecutor {
                     }
                 }
                 else if(args[0].equalsIgnoreCase("reload")) {
+                    Plugin toChange = Bukkit.getServer().getPluginManager().getPlugin("Redeem");
                     customConfig.reload();
                     userList.reload();
-                    player.sendMessage(ChatColor.RED + "The configs have been reloaded!");
+                    Bukkit.getPluginManager().disablePlugin(toChange);
+                    Bukkit.getPluginManager().enablePlugin(toChange);
+                    player.sendMessage(ChatColor.GREEN + "Reload complete!");
                 }
                 else if(args[0].equalsIgnoreCase("add")){
                     if(args.length > 2) {
