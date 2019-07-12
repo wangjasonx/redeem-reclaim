@@ -12,6 +12,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import me.Tsyrac.customConfig.userList;
+
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -62,7 +64,7 @@ public class reclaimCommand implements CommandExecutor {
                     sendPlayerMessages(messages, player);
                 }
                 else if(args[0].equalsIgnoreCase("listGroups")){
-                    listGroups(player);
+                    getGroups(player);
                 }
                 else if(args[0].equalsIgnoreCase("viewGroup")){
                     if(args.length > 2) {
@@ -157,16 +159,16 @@ public class reclaimCommand implements CommandExecutor {
                     }
                     else if(sender.hasPermission(getPermission(args[0])) && searchPlayer(player)){
                         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-                        List<String> runCommands = redeemConfig.getStringList(args[0] + ".Commands");
+                        List<String> runCommands = redeemConfig.getStringList(getPath(args[0]) + ".Commands");
                         for(int i = 0; i < runCommands.size(); i++){
                             String swap = replacePlayerInstance(runCommands.get(i), (Player) sender);
                             swap = swap.trim();
                             Bukkit.dispatchCommand(console, swap);
                         }
-                        player.sendMessage(ChatColor.DARK_RED + "Successfully claimed: " + ChatColor.GOLD + args[0]);
+                        player.sendMessage(ChatColor.DARK_RED + "Successfully claimed: " + ChatColor.GOLD + getPath(args[0]));
                     }
                     else {
-                        player.sendMessage(ChatColor.DARK_RED + "You do not have access to: " + ChatColor.GOLD + args[0]);
+                        player.sendMessage(ChatColor.DARK_RED + "You do not have access to: " + ChatColor.GOLD + getPath(args[0]));
                     }
                 }
             }
@@ -176,7 +178,33 @@ public class reclaimCommand implements CommandExecutor {
 
     //Cycles through the config.yml and checks if the group exists
     public boolean cycleFile(String argument) {
-        return(redeemConfig.contains(argument));
+
+        for(String s : getPathNames()){
+            if(s.equalsIgnoreCase(argument)){
+                return true;
+            }
+        }
+        return false;
+        //return(redeemConfig.contains(argument));
+    }
+
+    public List<String> getPathNames(){
+        List<String> list = new ArrayList<>();
+        for(String key : customConfig.getFile().getKeys(false)){
+            if(key.indexOf(".") == -1) {
+                list.add(key);
+            }
+        }
+        return list;
+    }
+
+    public String getPath(String check){
+        for(String get : getPathNames()){
+            if(get.equalsIgnoreCase(check)){
+                return get;
+            }
+        }
+        return "";
     }
 
     //Checks for instances of <player> in config.yml commands
@@ -195,7 +223,7 @@ public class reclaimCommand implements CommandExecutor {
 
     //Grabs the permission from the config.yml file
     public String getPermission(String path){
-        return redeemConfig.getString(path + ".Permission");
+        return redeemConfig.getString(getPath(path) + ".Permission");
     }
 
     //Checks if the player has admin permissions or not
@@ -257,25 +285,9 @@ public class reclaimCommand implements CommandExecutor {
         }
     }
 
-    public void listGroups(Player player){
-        Object[] groupList = customConfig.getFile().getKeys(false).toArray();
-        List<String> toReturn = new ArrayList<>();
-        String list = "";
-        for(Object o : groupList){
-            if(o.toString().indexOf(".") == -1){
-                toReturn.add(o.toString());
-            }
-        }
+    public void getGroups(Player player){
+        String list = String.join(", ", getPathNames());
         player.sendMessage(ChatColor.GOLD + "Groups: ");
-        for(int i = 0; i < toReturn.size(); i++){
-            if(i + 1 == toReturn.size()){
-                list += toReturn.get(i);
-            }
-            else{
-                list += toReturn.get(i) + ", ";
-            }
-        }
-        list = list.trim();
         player.sendMessage(ChatColor.GREEN + list);
     }
 
