@@ -55,7 +55,32 @@ public class CommandManager implements CommandExecutor{
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args){
 
         if(!(sender instanceof Player)){
-            sender.sendMessage(ChatColor.RED + "Only players can use these commands!");
+
+            if(command.getName().equalsIgnoreCase(mainCommand)){
+                if(args.length == 0){
+                    tellConsole("Missing arguments: <addPlayer/removePlayer> <player>", ChatColor.RED);
+                }
+                else if(args.length < 2){
+                    tellConsole("Missing arguments: <player>", ChatColor.RED);
+                }
+                else if(args.length > 3){
+                    tellConsole("Incorrect usage", ChatColor.DARK_RED);
+                }
+                else if(args[0].equalsIgnoreCase("addPlayer") || args[0].equalsIgnoreCase("removePlayer")){
+
+                    for(int i = 0; i < commands.size(); i++){
+                        if(args[0].equalsIgnoreCase(commands.get(i).name())){
+                            commands.get(i).onCommand(args);
+                            return true;
+                        }
+                    }
+
+                }
+                else{
+                    tellConsole("The Console cannot use this command!", ChatColor.DARK_RED);
+                }
+            }
+
             return true;
         }
 
@@ -140,6 +165,10 @@ public class CommandManager implements CommandExecutor{
             }
         }
         return null;
+    }
+
+    public void tellConsole(String message, ChatColor color){
+        Bukkit.getServer().getConsoleSender().sendMessage(color + message);
     }
 
     //Searching through list of UUIDs for the player, if found returns false, if not found adds player and returns true

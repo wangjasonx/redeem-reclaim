@@ -4,6 +4,7 @@ import me.Tsyrac.customConfig.userList;
 import me.Tsyrac.redeem.main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -29,6 +30,26 @@ public class reclaimAddPlayer extends SubCommand{
 
     @Override
     public void onCommand(String[] args) {
+
+        UUID player = null;
+        if(Bukkit.getPlayer(args[1]) != null){
+            player = Bukkit.getPlayer(args[1]).getUniqueId();
+        }
+        else if(Bukkit.getOfflinePlayer(args[1]) != null){
+            player = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+        }
+        else{
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_RED + "Player not found!");
+        }
+
+        if(userList.getFile().contains(player.toString())){
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_RED + "Player already exists!");
+        }
+        else{
+            userList.getFile().createSection(player.toString());
+            userList.save();
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "Player: " + ChatColor.GOLD + args[1] + " has been added!");
+        }
 
     }
 

@@ -28,6 +28,23 @@ public class reclaimRemovePlayer extends SubCommand{
     @Override
     public void onCommand(String[] args) {
 
+        UUID player = null;
+        if(Bukkit.getPlayer(args[1]) != null){
+            player = Bukkit.getPlayer(args[1]).getUniqueId();
+        }
+        else if(Bukkit.getOfflinePlayer(args[1]) != null){
+            player = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+        }
+        else{
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.DARK_RED + "Player not found!");
+        }
+
+        if(userList.getFile().contains(player.toString())){
+            userList.getFile().set(player.toString(), null);
+            userList.save();
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[1] + ChatColor.RED + " has been removed");
+        }
+
     }
 
     @Override
