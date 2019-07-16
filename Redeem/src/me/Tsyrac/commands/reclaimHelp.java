@@ -10,18 +10,12 @@ import java.util.List;
 public class reclaimHelp extends SubCommand{
 
     private main plugin = main.getInstance();
-    private boolean hasPerms;
     private List<String> messages;
-
-
-    public reclaimHelp(boolean perms){
-        this.hasPerms = perms;
-    }
 
     @Override
     public void onCommand(Player player, String[] args) {
 
-        if(!hasPerms){
+        if(!(player.hasPermission("reclaim.admin"))){
             messages = new ArrayList<>();
             messages.add(ChatColor.GRAY + "Developer: Tsyrac");
             messages.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Commands:");

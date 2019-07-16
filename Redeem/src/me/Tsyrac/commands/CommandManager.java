@@ -16,17 +16,29 @@ public class CommandManager implements CommandExecutor{
 
     private ArrayList<SubCommand> commands = new ArrayList<SubCommand>();
     private main plugin = main.getInstance();
-    private Player toCheck;
 
     public CommandManager(){}
 
     //Sub Commands
     public String mainCommand = "reclaim";
     public String help = "help";
+    public String listGroups = "listgroups";
+    public String viewGroup = "viewgroup";
+    public String clearPlayers = "clearplayers";
+    public String addPlayer = "addplayer";
+    public String removePlayer = "removeplayer";
+    public String reload = "reload";
+    public String add = "add";
+    public String addCommand = "addcommand";
+
 
     public void setup(){
         plugin.getCommand(mainCommand).setExecutor(this);
-        this.commands.add(new reclaimHelp(allowed(toCheck)));
+        this.commands.add(new reclaimHelp());
+        this.commands.add(new reclaimListGroups());
+        this.commands.add(new reclaimViewGroup());
+        this.commands.add(new reclaimClearPlayers());
+        this.commands.add(new reclaimAddPlayer());
     }
 
     @Override
@@ -38,7 +50,6 @@ public class CommandManager implements CommandExecutor{
         }
 
         Player player = (Player) sender;
-        toCheck = player;
 
         if(command.getName().equalsIgnoreCase(mainCommand)){
             if(args.length == 0){
@@ -46,10 +57,10 @@ public class CommandManager implements CommandExecutor{
                 return true;
             }
 
-            SubCommand target = this.get(args[0]);
+            SubCommand target = this.get(args[0], player);
 
             if(target == null){
-                player.sendMessage(ChatColor.RED + "Invalid subcommand");
+                player.sendMessage(ChatColor.RED + "You cannot do that!");
                 return true;
             }
 
@@ -72,7 +83,8 @@ public class CommandManager implements CommandExecutor{
         return true;
     }
 
-    private SubCommand get(String name){
+    private SubCommand get(String name, Player p){
+
         Iterator<SubCommand> subcommands = this.commands.iterator();
 
         while(subcommands.hasNext()){
@@ -94,12 +106,6 @@ public class CommandManager implements CommandExecutor{
         }
         return null;
     }
-
-    public boolean allowed(Player player) {
-        return(player.hasPermission("reclaim.admin"));
-    }
-
-
 
 }
 
