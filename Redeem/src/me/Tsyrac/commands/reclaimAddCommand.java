@@ -12,7 +12,6 @@ import java.util.List;
 public class reclaimAddCommand extends SubCommand{
 
     private main plugin = main.getInstance();
-    private FileConfiguration redeemConfig = customConfig.getFile();
 
     @Override
     public void onCommand(Player player, String[] args) {
@@ -25,8 +24,8 @@ public class reclaimAddCommand extends SubCommand{
         }
         else if(cycleFile(args[0])){
             String addedCommand = "";
-            List<String> commandAdd = redeemConfig.getStringList(args[1] + ".Commands");
-            for (int i = 2; i < args.length; i++) {
+            List<String> commandAdd = customConfig.getFile().getStringList(args[0] + ".Commands");
+            for (int i = 1; i < args.length; i++) {
                 if(i + 1 == args.length) {
                     addedCommand += args[i];
                 }
@@ -35,7 +34,7 @@ public class reclaimAddCommand extends SubCommand{
                 }
             }
             commandAdd.add(addedCommand);
-            redeemConfig.getConfigurationSection(args[1]).set("Commands", commandAdd);
+            customConfig.getFile().getConfigurationSection(args[0]).set("Commands", commandAdd);
             customConfig.save();
             player.sendMessage(ChatColor.RED + "Added the command: " + ChatColor.YELLOW + addedCommand);
         }

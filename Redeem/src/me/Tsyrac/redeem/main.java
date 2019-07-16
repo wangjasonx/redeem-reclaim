@@ -1,6 +1,5 @@
 package me.Tsyrac.redeem;
 import me.Tsyrac.commands.CommandManager;
-import me.Tsyrac.commands.reclaimCommand;
 import me.Tsyrac.customConfig.customConfig;
 import me.Tsyrac.customConfig.userList;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,7 +33,6 @@ public class main extends JavaPlugin {
         userList.save();
 
         //adds the reclaim command
-        //getCommand("reclaim").setExecutor(new reclaimCommand());
 
     }
 

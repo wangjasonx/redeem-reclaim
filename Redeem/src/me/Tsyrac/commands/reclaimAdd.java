@@ -3,7 +3,6 @@ package me.Tsyrac.commands;
 import me.Tsyrac.customConfig.customConfig;
 import me.Tsyrac.redeem.main;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 public class reclaimAdd extends SubCommand{
 
     private main plugin = main.getInstance();
-    private FileConfiguration redeemConfig = customConfig.getFile();
 
     @Override
     public void onCommand(Player player, String[] args) {
@@ -22,9 +20,9 @@ public class reclaimAdd extends SubCommand{
             player.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please try again.");
         }
         else{
-            redeemConfig.createSection(args[0]);
-            redeemConfig.getConfigurationSection(args[0]).set("Permission", "reclaim." + args[1]);
-            redeemConfig.getConfigurationSection(args[0]).set("Commands", new ArrayList<String>());
+            customConfig.getFile().createSection(args[0]);
+            customConfig.getFile().getConfigurationSection(args[0]).set("Permission", "reclaim." + args[0]);
+            customConfig.getFile().getConfigurationSection(args[0]).set("Commands", new ArrayList<String>());
             customConfig.save();
             player.sendMessage(ChatColor.RED + args[0] + " has been added!");
         }

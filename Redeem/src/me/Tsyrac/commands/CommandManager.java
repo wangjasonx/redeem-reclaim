@@ -1,15 +1,21 @@
 package me.Tsyrac.commands;
 
+import me.Tsyrac.customConfig.customConfig;
+import me.Tsyrac.customConfig.userList;
 import me.Tsyrac.redeem.main;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 
 public class CommandManager implements CommandExecutor{
@@ -61,26 +67,51 @@ public class CommandManager implements CommandExecutor{
                 return true;
             }
 
-            SubCommand target = this.get(args[0], player);
+            if(args.length == 1 && cycleFile(args[0])){
 
-            if(target == null){
-                player.sendMessage(ChatColor.RED + "You cannot do that!");
-                return true;
+                if(sender.hasPermission(getPermission(args[0])) && searchPlayer(player)){
+                    ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+                    List<String> runCommands = customConfig.getFile().getStringList(getPath(args[0]) + ".Commands");
+                    for(int i = 0; i < runCommands.size(); i++){
+                        String swap = replacePlayerInstance(runCommands.get(i), (Player) sender);
+                        swap = swap.trim();
+                        Bukkit.dispatchCommand(console, swap);
+                    }
+                    player.sendMessage(ChatColor.DARK_RED + "Successfully claimed: " + ChatColor.GOLD + getPath(args[0]));
+                }
+                else {
+                    player.sendMessage(ChatColor.DARK_RED + "You do not have access to: " + ChatColor.GOLD + getPath(args[0]));
+                }
+
             }
-
-            ArrayList<String> arrayList = new ArrayList<String>();
-
-            arrayList.addAll(Arrays.asList(args));
-            arrayList.remove(0);
-
-            try
-            {
-                target.onCommand(player, arrayList.toArray(new String[0]));
+            else if(!(player.hasPermission("reclaim.admin"))){
+                ArrayList<String> helpCommand = new ArrayList<String>();
+                helpCommand.addAll(Arrays.asList(args));
+                helpCommand.remove(0);
+                commands.get(0).onCommand(player, helpCommand.toArray(new String[0]));
             }
-            catch(Exception e)
-            {
-                player.sendMessage(ChatColor.RED + "An error has occurred");
-                e.printStackTrace();
+            else{
+                SubCommand target = this.get(args[0], player);
+
+                if(target == null){
+                    player.sendMessage(ChatColor.RED + "You cannot do that!");
+                    return true;
+                }
+
+                ArrayList<String> arrayList = new ArrayList<String>();
+
+                arrayList.addAll(Arrays.asList(args));
+                arrayList.remove(0);
+
+                try
+                {
+                    target.onCommand(player, arrayList.toArray(new String[0]));
+                }
+                catch(Exception e)
+                {
+                    player.sendMessage(ChatColor.RED + "An error has occurred");
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -109,6 +140,65 @@ public class CommandManager implements CommandExecutor{
             }
         }
         return null;
+    }
+
+    //Searching through list of UUIDs for the player, if found returns false, if not found adds player and returns true
+    public boolean searchPlayer(Player player){
+        if(userList.getFile().contains(player.getUniqueId().toString())){
+            return false;
+        }
+        userList.getFile().createSection(player.getUniqueId().toString());
+        userList.save();
+        return true;
+    }
+
+    public boolean cycleFile(String argument) {
+
+        for(String s : getPathNames()){
+            if(s.equalsIgnoreCase(argument)){
+                return true;
+            }
+        }
+        return false;
+        //return(redeemConfig.contains(argument));
+    }
+
+    public String getPath(String check){
+        for(String get : getPathNames()){
+            if(get.equalsIgnoreCase(check)){
+                return get;
+            }
+        }
+        return "";
+    }
+
+    //Checks for instances of <player> in config.yml commands
+    public String replacePlayerInstance(@NotNull String argument, Player p){
+        String[] toFix = argument.split(" ");
+        String toReturn = "";
+        for(String x : toFix) {
+            if(x.compareToIgnoreCase("<player>") == 0) {
+                toReturn += p.getName() + " ";
+            } else{
+                toReturn += x + " ";
+            }
+        }
+        return toReturn;
+    }
+
+    //Grabs the permission from the config.yml file
+    public String getPermission(String path){
+        return customConfig.getFile().getString(getPath(path) + ".Permission");
+    }
+
+    public List<String> getPathNames(){
+        List<String> list = new ArrayList<>();
+        for(String key : customConfig.getFile().getKeys(false)){
+            if(key.indexOf(".") == -1) {
+                list.add(key);
+            }
+        }
+        return list;
     }
 
 }
