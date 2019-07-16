@@ -39,6 +39,10 @@ public class CommandManager implements CommandExecutor{
         this.commands.add(new reclaimViewGroup());
         this.commands.add(new reclaimClearPlayers());
         this.commands.add(new reclaimAddPlayer());
+        this.commands.add(new reclaimRemovePlayer());
+        this.commands.add(new reclaimReload());
+        this.commands.add(new reclaimAdd());
+        this.commands.add(new reclaimAddCommand());
     }
 
     @Override
